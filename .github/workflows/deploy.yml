@@ -1,0 +1,53 @@
+name: MERN Stack CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # Use the version compatible with your project
+          
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          cd server
+          npm install
+          cd ../client
+          npm install
+
+      # Step 4: Lint and Test
+      - name: Run Linter and Tests
+        run: |
+          cd server
+          npm run lint
+          npm test
+          cd ../client
+          npm run lint
+          npm test
+
+      # Step 5: Build the frontend
+      - name: Build frontend
+        run: |
+          cd client
+          npm run build
+
+      # Step 6: Deploy (Optional)
+      - name: Deploy (Optional)
+        if: github.ref == 'refs/heads/main'
+        run: echo "Add your deployment steps here"
